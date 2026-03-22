@@ -207,32 +207,32 @@ export default function SplitPDF() {
 
     return (
         <div className="flex flex-col items-center pb-32 pt-16 px-4">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-[#33333B] dark:text-gray-100 text-center mb-4 tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white text-center mb-6 tracking-tight drop-shadow-sm">
                 Dividir/Extrair PDF
             </h2>
-            <p className="text-[#33333B] dark:text-gray-300 text-lg text-center mb-10 max-w-2xl font-light">
+            <p className="text-slate-600 dark:text-gray-400 text-lg lg:text-xl text-center mb-10 max-w-2xl font-medium tracking-wide">
                 Extraia páginas específicas de um documento ou desmembre todas as páginas em arquivos individuais.
             </p>
 
             {/* Empty View */}
             {!file && status === "idle" ? (
                 <div
-                    className={`w-full max-w-4xl h-[300px] border-4 border-dashed rounded-3xl flex flex-col items-center justify-center transition-all cursor-pointer ${isHovering ? "border-pdfred bg-red-50 dark:bg-red-900/20 shadow-inner" : "border-pdfred/40 bg-white dark:bg-[#1e1e1e] hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-pdfred hover:shadow-lg"
+                    className={`w-full max-w-4xl h-[350px] border-4 border-dashed rounded-3xl flex flex-col items-center justify-center transition-all cursor-pointer ${isHovering ? "border-[#2980f2] bg-[#2980f2]/5 dark:bg-[#2980f2]/10 shadow-inner" : "border-[#2980f2]/50 bg-white dark:bg-[#1e1e1e] hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-[#2980f2] hover:shadow-lg"
                         }`}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
                 >
-                    <UploadCloud className={`w-28 h-28 mb-4 ${isHovering ? "text-pdfred" : "text-gray-400 dark:text-gray-500"}`} />
-                    <button className="bg-pdfred hover:bg-red-700 text-white font-bold py-4 px-10 rounded-2xl text-xl shadow-lg transition-transform transform hover:scale-105">
+                    <UploadCloud className={`w-28 h-28 mb-4 transition-colors ${isHovering ? "text-[#2980f2]" : "text-gray-400 dark:text-gray-500"}`} />
+                    <button className="bg-[#2980f2] text-white hover:bg-[#2980f2]/90 font-semibold py-5 px-10 rounded-2xl text-2xl shadow-lg transition-transform transform hover:scale-105 pointer-events-none">
                         Selecionar arquivo PDF
                     </button>
                     <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="application/pdf" className="hidden" />
                 </div>
             ) : status === "processing_pages" ? (
                 <div className="w-full max-w-lg bg-white dark:bg-[#1e1e1e] p-10 rounded-3xl shadow-2xl flex flex-col items-center border border-gray-100 dark:border-gray-800 mt-10">
-                    <Loader2 className="w-16 h-16 animate-spin text-pdfred mb-6" />
+                    <Loader2 className="w-16 h-16 animate-spin text-[#2980f2] mb-6" />
                     <span className="text-xl font-bold text-gray-800 dark:text-gray-100 text-center leading-tight">Mapeando o documento...</span>
                 </div>
             ) : status !== "idle" && !status.startsWith("uploading") ? null : (
@@ -247,10 +247,10 @@ export default function SplitPDF() {
                                 <div 
                                     key={idx} 
                                     onClick={() => togglePageSelection(idx)}
-                                    className={`relative w-44 h-64 rounded-xl shadow-md border-2 flex flex-col items-center overflow-hidden p-2 transition-all cursor-pointer hover:-translate-y-1 ${isSelected ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-blue-100 dark:shadow-none" : "border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e1e1e] hover:border-blue-300 dark:hover:border-blue-600"}`}
+                                    className={`relative w-44 h-64 rounded-xl shadow-md border-2 flex flex-col items-center overflow-hidden p-2 transition-all cursor-pointer hover:-translate-y-1 ${isSelected ? "border-[#2980f2] bg-[#2980f2]/10 dark:bg-[#2980f2]/20 shadow-lg dark:shadow-none" : "border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e1e1e] hover:border-[#2980f2]/50"}`}
                                 >
                                     {/* Visual Selection Indicator */}
-                                    <div className={`absolute top-2 left-2 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors z-10 ${isSelected ? "bg-blue-500 border-blue-500" : "bg-white border-gray-300 dark:border-gray-600 dark:bg-gray-800"}`}>
+                                    <div className={`absolute top-2 left-2 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors z-10 ${isSelected ? "bg-[#2980f2] border-[#2980f2]" : "bg-white border-gray-300 dark:border-gray-600 dark:bg-gray-800"}`}>
                                         {isSelected && <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
                                     </div>
 
@@ -260,7 +260,7 @@ export default function SplitPDF() {
                                     </div>
 
                                     <div className="w-full text-center">
-                                        <p className={`text-sm font-bold truncate ${isSelected ? "text-blue-700 dark:text-blue-400" : "text-gray-800 dark:text-gray-300"}`}>Página {idx + 1}</p>
+                                        <p className={`text-sm font-bold truncate ${isSelected ? "text-[#2980f2]" : "text-gray-800 dark:text-gray-300"}`}>Página {idx + 1}</p>
                                     </div>
                                 </div>
                             );
@@ -292,7 +292,7 @@ export default function SplitPDF() {
 
                                 <button
                                     onClick={handleSplitSelected}
-                                    className={`font-bold py-4 px-8 rounded-xl flex items-center justify-center space-x-2 shadow-lg transition-all ${selectedPages.size < 1 ? "bg-red-300 cursor-not-allowed text-white scale-100" : "bg-pdfred hover:bg-red-700 text-white hover:scale-105"
+                                    className={`font-semibold py-4 px-8 rounded-xl flex items-center justify-center space-x-2 shadow-lg transition-all ${selectedPages.size < 1 ? "bg-gray-300 dark:bg-gray-700 cursor-not-allowed text-gray-500 scale-100" : "bg-[#2980f2] hover:bg-[#2980f2]/90 text-white hover:scale-105"
                                         }`}
                                     disabled={selectedPages.size < 1}
                                 >
@@ -306,13 +306,13 @@ export default function SplitPDF() {
                     {status.startsWith("uploading") && (
                         <div className="w-full max-w-lg bg-white dark:bg-[#1e1e1e] p-10 rounded-3xl shadow-2xl flex flex-col items-center border border-gray-100 dark:border-gray-800 mt-10">
                             <div className="flex flex-col items-center mb-8">
-                                <Loader2 className="w-16 h-16 animate-spin text-pdfred mb-6" />
+                                <Loader2 className="w-16 h-16 animate-spin text-[#2980f2] mb-6" />
                                 <span className="text-2xl font-bold text-gray-800 dark:text-gray-100 text-center leading-tight">
                                     {status === "uploading_all" ? "Fatiando arquivo e gerando Zip..." : "Cortando páginas selecionadas..."}
                                 </span>
                             </div>
-                            <div className="w-full bg-red-50 rounded-full h-5 overflow-hidden border border-red-100 relative">
-                                <div className="bg-pdfred h-full rounded-full transition-all duration-300 ease-in-out flex items-center justify-end" style={{ width: `${uploadProgress}%` }}>
+                            <div className="w-full bg-[#2980f2]/20 rounded-full h-5 overflow-hidden relative">
+                                <div className="bg-[#2980f2] h-full rounded-full transition-all duration-300 ease-in-out flex items-center justify-end" style={{ width: `${uploadProgress}%` }}>
                                     {uploadProgress > 15 && <span className="text-[11px] text-white font-bold mr-3">{uploadProgress}%</span>}
                                 </div>
                             </div>
@@ -323,7 +323,7 @@ export default function SplitPDF() {
 
             {/* Success and Error States */}
             {status === "success" && (
-                <div className="flex flex-col items-center text-green-600 animate-in fade-in zoom-in duration-300 bg-white dark:bg-[#1e1e1e] p-12 sm:p-16 rounded-3xl shadow-2xl border border-green-50 dark:border-green-900/30 w-full max-w-2xl mt-10 z-10">
+                <div className="flex flex-col items-center text-[#2980f2] animate-in fade-in zoom-in duration-300 bg-white dark:bg-[#1e1e1e] p-12 sm:p-16 rounded-3xl shadow-2xl border border-green-50 dark:border-[#2980f2]/50 w-full max-w-2xl mt-10 z-10">
                     <CheckCircle className="w-28 h-28 mb-8" />
                     <p className="text-4xl font-extrabold mb-4 text-gray-900 dark:text-gray-100 text-center tracking-tight">Corte concluído!</p>
                     <p className="text-gray-500 dark:text-gray-400 mb-10 text-center text-lg font-medium">Suas opções foram processadas e o download automático foi iniciado.</p>
@@ -333,7 +333,7 @@ export default function SplitPDF() {
                                 Baixar Arquivo Novamente
                             </a>
                         )}
-                        <button onClick={handleReset} className="flex-1 bg-pdfred hover:bg-red-700 text-white font-bold py-5 px-6 rounded-2xl flex items-center justify-center space-x-3 shadow-xl transition-all hover:-translate-y-1">
+                        <button onClick={handleReset} className="flex-1 bg-[#2980f2] hover:bg-[#2980f2]/90 text-white font-semibold py-5 px-6 rounded-2xl flex items-center justify-center space-x-3 shadow-xl transition-all hover:-translate-y-1">
                             <RefreshCw className="w-6 h-6" />
                             <span>Dividir outro PDF</span>
                         </button>
@@ -342,12 +342,12 @@ export default function SplitPDF() {
             )}
 
             {status === "error" && (
-                <div className="flex flex-col items-center w-full max-w-md bg-white dark:bg-[#1e1e1e] p-10 rounded-3xl border border-red-100 dark:border-red-900/40 shadow-xl mt-10 z-10">
-                    <div className="w-20 h-20 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-6">
-                        <X className="w-10 h-10 text-pdfred" />
+                <div className="flex flex-col items-center w-full max-w-md bg-white dark:bg-[#1e1e1e] p-10 rounded-3xl border border-red-100 dark:border-[#2980f2]/50 shadow-xl mt-10 z-10">
+                    <div className="w-20 h-20 bg-[#2980f2]/5 dark:bg-[#2980f2]/10 rounded-full flex items-center justify-center mb-6">
+                        <X className="w-10 h-10 text-[#2980f2]" />
                     </div>
-                    <p className="font-bold mb-8 text-red-700 dark:text-red-400 text-center text-xl">Oops, algo quebrou no backend!<br /><span className="text-sm font-normal text-gray-600 dark:text-gray-400">Verifique os logs do servidor Python.</span></p>
-                    <button onClick={() => setStatus("idle")} className="w-full bg-white dark:bg-transparent border-2 border-red-600 dark:border-red-500 hover:bg-red-600 dark:hover:bg-red-500 hover:text-white dark:text-red-500 text-red-600 font-bold py-4 px-8 rounded-xl transition-colors shadow-sm">
+                    <p className="font-bold mb-8 text-red-700 dark:text-gray-500 text-center text-xl">Oops, algo quebrou no backend!<br /><span className="text-sm font-normal text-gray-600 dark:text-gray-400">Verifique os logs do servidor Python.</span></p>
+                    <button onClick={() => setStatus("idle")} className="w-full bg-white dark:bg-transparent border-2 border-red-600 dark:border-[#2980f2]/50 hover:bg-[#2980f2] dark:hover:bg-[#2980f2]/50 hover:text-white dark:text-[#2980f2] text-[#2980f2] font-bold py-4 px-8 rounded-xl transition-colors shadow-sm">
                         Voltar e revisar o envio
                     </button>
                 </div>

@@ -232,7 +232,7 @@ export default function AddText() {
     if (!isMounted) return null;
 
     return (
-        <div className="min-h-screen bg-[#F0F2F5] dark:bg-[#121212] flex flex-col pt-24 pb-12 px-4 items-center font-sans tracking-tight transition-colors">
+        <div className="min-h-screen bg-transparent dark:bg-transparent flex flex-col pt-24 pb-12 px-4 items-center font-sans tracking-tight transition-colors">
             <h1 className="text-4xl md:text-5xl font-extrabold text-[#33333B] dark:text-gray-100 mb-3">Edição Visual de PDF</h1>
             <p className="text-lg text-[#33333B] dark:text-gray-300 font-light mb-10 text-center max-w-2xl text-opacity-80">
                 Arraste, solte e edite caixas de texto diretamente sobre o documento. Desenhamos blocos definitivos mantendo o vetor original do seu arquivo.
@@ -240,9 +240,9 @@ export default function AddText() {
 
             {!fileUrl ? (
                 <div onClick={() => document.getElementById("fileInput")?.click()} 
-                    className="w-full max-w-4xl h-[320px] bg-white dark:bg-[#1e1e1e] border-4 border-dashed border-red-300 dark:border-red-900/50 hover:border-pdfred hover:bg-red-50 dark:hover:bg-red-900/20 transition-all rounded-[30px] flex flex-col items-center justify-center cursor-pointer relative shadow-sm group">
-                    <UploadCloud className="w-24 h-24 text-red-300 dark:text-gray-500 group-hover:scale-110 group-hover:text-pdfred dark:group-hover:text-red-400 transition-transform mb-6" />
-                    <button className="bg-pdfred tracking-wide hover:bg-red-700 text-white font-bold py-4 px-10 rounded-2xl text-xl shadow-[0_4px_14px_0_rgba(229,50,45,0.39)] transition-transform transform hover:scale-105 pointer-events-none">
+                    className="w-full max-w-4xl h-[320px] bg-white dark:bg-[#1e1e1e] border-4 border-dashed border-[#2980f2]/30 dark:border-[#2980f2]/50 hover:border-[#2980f2] hover:bg-[#2980f2]/5 dark:hover:bg-[#2980f2]/10 transition-all rounded-[30px] flex flex-col items-center justify-center cursor-pointer relative shadow-sm group">
+                    <UploadCloud className="w-24 h-24 text-gray-400 dark:text-gray-500 group-hover:scale-110 group-hover:text-[#2980f2] dark:group-hover:text-red-400 transition-transform mb-6" />
+                    <button className="bg-[#2980f2] tracking-wide hover:bg-[#2980f2]/90 text-white font-bold py-4 px-10 rounded-2xl text-xl shadow-lg transition-transform transform hover:scale-105 pointer-events-none">
                         Visualizar e Editar PDF
                     </button>
                     <input type="file" id="fileInput" accept="application/pdf" className="hidden" onChange={onFileChange} />
@@ -254,7 +254,7 @@ export default function AddText() {
                     <div className="w-full xl:w-[350px] bg-white dark:bg-[#1e1e1e] p-6 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 flex flex-col gap-6 h-fit shrink-0 relative z-10 sticky top-24">
                         <div className="flex justify-between items-center pb-4 border-b border-gray-100 dark:border-gray-800">
                             <h3 className="font-extrabold text-xl text-[#33333B] dark:text-gray-100">Layer de Textos</h3>
-                            <button onClick={handleAddTextElement} className="bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white dark:hover:text-white px-3 py-2 rounded-xl text-sm font-bold flex items-center transition-colors shadow-sm">
+                            <button onClick={handleAddTextElement} className="bg-[#2980f2]/5 dark:bg-[#2980f2]/10 text-[#2980f2] dark:text-[#2980f2] hover:bg-[#2980f2] dark:hover:bg-[#2980f2] hover:text-white dark:hover:text-white px-3 py-2 rounded-xl text-sm font-bold flex items-center transition-colors shadow-sm">
                                 <Plus className="w-5 h-5 mr-1" /> Add Texto
                             </button>
                         </div>
@@ -271,11 +271,11 @@ export default function AddText() {
                             
                             {textElements.map((el, i) => (
                                 <div key={el.id} className="bg-gray-50 dark:bg-[#1a1a1a] p-4 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col gap-3 group relative overflow-hidden transition hover:shadow-md animate-in slide-in-from-left max-w-full">
-                                    <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                                    <div className="absolute top-0 left-0 w-1 h-full bg-[#2980f2]"></div>
 
                                     <div className="flex justify-between items-center ml-2">
                                         <span className="font-bold text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500">Box #{i+1}</span>
-                                        <button onClick={() => handleRemoveElement(el.id)} className="text-red-400 hover:text-red-500 text-xs font-bold px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-lg opacity-80 group-hover:opacity-100 transition">Excluir</button>
+                                        <button onClick={() => handleRemoveElement(el.id)} className="text-red-400 hover:text-[#2980f2] text-xs font-bold px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-lg opacity-80 group-hover:opacity-100 transition">Excluir</button>
                                     </div>
 
                                     <div className="ml-2">
@@ -324,7 +324,7 @@ export default function AddText() {
                         </div>
                         
                         <div className="mt-auto pt-6 border-t border-gray-100 dark:border-gray-800 flex flex-col gap-3">
-                            <button onClick={handleProcess} className="w-full flex items-center justify-center gap-2 bg-pdfred hover:bg-red-700 text-white font-bold py-4 rounded-xl shadow-[0_4px_14px_0_rgba(229,50,45,0.39)] transition transform hover:-translate-y-0.5 mt-2">
+                            <button onClick={handleProcess} className="w-full flex items-center justify-center gap-2 bg-[#2980f2] hover:bg-[#2980f2]/90 text-white font-bold py-4 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 mt-2">
                                 <CheckCircle className="w-5 h-5"/> Processar e Baixar PDF
                             </button>
                             <button onClick={handleReset} className="w-full bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-[#33333B] dark:text-gray-200 font-bold py-3 rounded-xl transition border border-gray-200 dark:border-gray-700 shadow-sm">
@@ -352,16 +352,16 @@ export default function AddText() {
                             </div>
                             
                             <div className="flex items-center gap-2 bg-white dark:bg-gray-800 px-2 py-1 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                                <button onClick={() => setZoom(z => Math.max(z - 0.25, 0.5))} className="w-8 h-8 flex items-center justify-center font-bold text-lg text-gray-700 dark:text-gray-300 hover:text-pdfred transition hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg">-</button>
+                                <button onClick={() => setZoom(z => Math.max(z - 0.25, 0.5))} className="w-8 h-8 flex items-center justify-center font-bold text-lg text-gray-700 dark:text-gray-300 hover:text-[#2980f2] transition hover:bg-[#2980f2]/5 dark:hover:bg-[#2980f2]/10 rounded-lg">-</button>
                                 <span className="font-extrabold text-[#33333B] dark:text-gray-100 w-14 text-center text-sm">{Math.round(zoom * 100)}%</span>
-                                <button onClick={() => setZoom(z => Math.min(z + 0.25, 4))} className="w-8 h-8 flex items-center justify-center font-bold text-lg text-gray-700 dark:text-gray-300 hover:text-pdfred transition hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg">+</button>
+                                <button onClick={() => setZoom(z => Math.min(z + 0.25, 4))} className="w-8 h-8 flex items-center justify-center font-bold text-lg text-gray-700 dark:text-gray-300 hover:text-[#2980f2] transition hover:bg-[#2980f2]/5 dark:hover:bg-[#2980f2]/10 rounded-lg">+</button>
                             </div>
                         </div>
 
                         {/* Rendering Dinamico */}
                         <div className="relative shadow-2xl rounded-sm transition-all duration-300 mx-auto w-max" ref={pageContainerRef}>
                             {fileUrl && (
-                                <Document file={fileUrl} onLoadSuccess={onDocumentLoadSuccess} loading={<div className="p-32 flex flex-col items-center"><Loader2 className="animate-spin w-12 h-12 text-pdfred mb-4" /><span className="text-gray-500 font-bold">Processando vetores do PDF...</span></div>}>
+                                <Document file={fileUrl} onLoadSuccess={onDocumentLoadSuccess} loading={<div className="p-32 flex flex-col items-center"><Loader2 className="animate-spin w-12 h-12 text-[#2980f2] mb-4" /><span className="text-gray-500 font-bold">Processando vetores do PDF...</span></div>}>
                                     <Page 
                                         pageNumber={currentPage} 
                                         onLoadSuccess={onPageLoadSuccess}
@@ -392,7 +392,7 @@ export default function AddText() {
                                                 handleUpdateElement(el.id, { x: d.x / renderScaleX, y: d.y / renderScaleY });
                                             }}
                                             enableResizing={false}
-                                            className="pointer-events-auto border-2 border-dashed border-blue-400 bg-blue-50/20 backdrop-blur-[1px] cursor-move hover:border-blue-600 transition p-1 hover:shadow-lg rounded-sm group"
+                                            className="pointer-events-auto border-2 border-dashed border-[#2980f2]/50 bg-[#2980f2]/5/20 backdrop-blur-[1px] cursor-move hover:border-blue-600 transition p-1 hover:shadow-lg rounded-sm group"
                                         >
                                             <div 
                                                 style={{ 
@@ -408,7 +408,7 @@ export default function AddText() {
                                             >
                                                 {el.text}
                                             </div>
-                                            <div className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer shadow-lg" onClick={() => handleRemoveElement(el.id)}>
+                                            <div className="absolute -top-3 -right-3 bg-[#2980f2]/50 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer shadow-lg" onClick={() => handleRemoveElement(el.id)}>
                                                 &times;
                                             </div>
                                         </Rnd>
@@ -422,16 +422,16 @@ export default function AddText() {
                 
             ) : status === "uploading" ? (
                 <div className="flex flex-col items-center mt-32 w-full max-w-xl animate-in zoom-in slide-in-from-bottom-5">
-                    <Loader2 className="w-24 h-24 animate-spin text-pdfred mb-8" />
+                    <Loader2 className="w-24 h-24 animate-spin text-[#2980f2] mb-8" />
                     <span className="text-4xl font-extrabold text-[#33333B] dark:text-gray-100 tracking-tight text-center">Injetando elementos vetoriais...</span>
                     <p className="text-gray-500 dark:text-gray-400 mt-3 mb-8 text-center">Não feche esta página, processamento em andamento.</p>
                     <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-5 overflow-hidden shadow-inner border border-gray-300 dark:border-gray-700 p-1">
-                        <div className="bg-pdfred h-full rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
+                        <div className="bg-[#2980f2] h-full rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
                     </div>
                 </div>
             ) : (
                 <div className="flex flex-col items-center mt-20 p-16 bg-white dark:bg-[#1e1e1e] rounded-[40px] shadow-2xl w-full max-w-2xl border border-gray-100 dark:border-gray-800 animate-in flip-in-y">
-                    <CheckCircle className="w-32 h-32 text-green-500 mb-8 drop-shadow-lg" />
+                    <CheckCircle className="w-32 h-32 text-[#2980f2] mb-8 drop-shadow-lg" />
                     <h2 className="text-5xl font-extrabold text-[#33333B] dark:text-gray-100 mb-6 text-center tracking-tight">Perfeito!</h2>
                     <p className="text-gray-500 dark:text-gray-400 mb-12 text-center text-xl max-w-sm">
                         O texto foi mesclado ao documento nas coordenadas visuais exatas.
@@ -443,8 +443,8 @@ export default function AddText() {
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
-                    }} className="w-full max-w-sm bg-[#33333B] text-white text-center font-bold py-6 rounded-2xl text-2xl hover:bg-black transition shadow-[0_10px_30px_rgba(0,0,0,0.3)] flex items-center justify-center transform hover:-translate-y-1 mb-6">
-                        <Download className="w-7 h-7 mr-3" /> Salvar PDF
+                    }} className="w-full max-w-sm bg-[#2980f2] text-white text-center font-bold py-6 rounded-2xl text-2xl hover:bg-[#2980f2]/90 transition shadow-lg flex items-center justify-center transform hover:-translate-y-1 mb-6">
+                        <Download className="w-6 h-6 mr-3" /> Baixar PDF
                     </button>
                     <button onClick={handleReset} className="w-full max-w-sm text-gray-500 dark:text-gray-400 font-bold hover:text-gray-800 dark:hover:text-gray-200 transition py-4 bg-gray-50 dark:bg-[#1a1a1a] rounded-2xl border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 mt-2 text-lg">
                         Começar de novo

@@ -70,19 +70,19 @@ export default function ConvertToWord() {
             <p className="text-[#33333B] dark:text-gray-300 text-lg text-center mb-10 max-w-2xl font-light">Converta facilmente seus arquivos PDF para DOCX editáveis via Extração Nativa Python.</p>
 
             {!file && status === "idle" ? (
-                <div className={`w-full max-w-4xl h-[300px] border-4 border-dashed rounded-3xl flex flex-col items-center justify-center transition-all cursor-pointer ${isHovering ? "border-pdfred bg-red-50 dark:bg-red-900/20 shadow-inner" : "border-pdfred/40 bg-white dark:bg-[#1e1e1e] hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-pdfred hover:shadow-lg"}`} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} onClick={() => fileInputRef.current?.click()}>
-                    <UploadCloud className={`w-28 h-28 mb-4 ${isHovering ? "text-pdfred" : "text-gray-400 dark:text-gray-500"}`} />
-                    <button className="bg-pdfred hover:bg-red-700 text-white font-bold py-4 px-10 rounded-2xl text-xl shadow-lg hover:scale-105 transition-all">Selecionar PDF</button>
+                <div className={`w-full max-w-4xl h-[300px] border-4 border-dashed rounded-3xl flex flex-col items-center justify-center transition-all cursor-pointer ${isHovering ? "border-[#2980f2] bg-[#2980f2]/5 dark:bg-[#2980f2]/10 shadow-inner" : "border-[#2980f2]/40 bg-white dark:bg-[#1e1e1e] hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-[#2980f2] hover:shadow-lg"}`} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} onClick={() => fileInputRef.current?.click()}>
+                    <UploadCloud className={`w-28 h-28 mb-4 ${isHovering ? "text-[#2980f2]" : "text-gray-400 dark:text-gray-500"}`} />
+                    <button className="bg-[#2980f2] hover:bg-[#2980f2]/90 text-white font-bold py-4 px-10 rounded-2xl text-xl shadow-lg hover:scale-105 transition-all">Selecionar PDF</button>
                     <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="application/pdf" className="hidden" />
                 </div>
             ) : status !== "idle" && status !== "uploading" ? null : (
                 <div className="w-full max-w-md bg-white dark:bg-[#1e1e1e] rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 flex flex-col items-center text-center">
                     {status === "idle" && (
                         <>
-                            <FileText className="text-pdfred w-16 h-16 mb-4" />
+                            <FileText className="text-[#2980f2] w-16 h-16 mb-4" />
                             <p className="text-xl font-bold text-gray-800 dark:text-gray-100 truncate max-w-full">{file!.name}</p>
                             <div className="mt-8 flex flex-col gap-4 w-full">
-                                <button onClick={handleConvert} className="bg-pdfred text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 hover:bg-red-700 w-full shadow-md"><FileEdit /> Converter para WORD</button>
+                                <button onClick={handleConvert} className="bg-[#2980f2] text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 hover:bg-[#2980f2]/90 w-full shadow-md"><FileEdit /> Converter para WORD</button>
                                 
                                 <button onClick={handleReset} className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-bold py-3 px-8 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700">Cancelar</button>
                             </div>
@@ -90,7 +90,7 @@ export default function ConvertToWord() {
                     )}
                     {status === "uploading" && (
                         <div className="flex flex-col items-center">
-                            <Loader2 className="w-16 h-16 animate-spin text-pdfred mb-6" />
+                            <Loader2 className="w-16 h-16 animate-spin text-[#2980f2] mb-6" />
                             <span className="text-xl font-bold text-gray-800 dark:text-gray-100">Convertendo texto e layout via AI...</span>
                         </div>
                     )}
@@ -98,8 +98,8 @@ export default function ConvertToWord() {
             )}
             
             {status === "success" && (
-                <div className="flex flex-col items-center w-full max-w-2xl bg-white dark:bg-[#1e1e1e] p-12 rounded-3xl shadow-2xl border border-green-50 dark:border-green-900/30 animate-in zoom-in mt-10">
-                    <CheckCircle className="w-20 h-20 text-green-500 mb-6" />
+                <div className="flex flex-col items-center w-full max-w-2xl bg-white dark:bg-[#1e1e1e] p-12 rounded-3xl shadow-2xl border border-green-50 dark:border-[#2980f2]/50 animate-in zoom-in mt-10">
+                    <CheckCircle className="w-20 h-20 text-[#2980f2] mb-6" />
                     <p className="text-3xl font-extrabold mb-4 text-gray-900 dark:text-gray-100 tracking-tight text-center">Word Gerado com Sucesso!</p>
                     <p className="text-gray-500 dark:text-gray-400 mb-8 text-center text-lg font-medium">Seu arquivo DOCX está pronto para edição.</p>
                     
@@ -109,7 +109,7 @@ export default function ConvertToWord() {
                                 Baixar Arquivo DOCX
                             </a>
                         )}
-                        <button onClick={handleReset} className="flex-1 bg-pdfred hover:bg-red-700 text-white font-bold py-5 px-6 rounded-2xl flex items-center justify-center shadow-xl transition-all hover:-translate-y-1">
+                        <button onClick={handleReset} className="flex-1 bg-[#2980f2] hover:bg-[#2980f2]/90 text-white font-bold py-5 px-6 rounded-2xl flex items-center justify-center shadow-xl transition-all hover:-translate-y-1">
                             Converter Outro PDF
                         </button>
                     </div>
@@ -118,8 +118,8 @@ export default function ConvertToWord() {
             
             {status === "error" && (
                 <div className="flex flex-col items-center bg-white dark:bg-[#1e1e1e] p-10 rounded-3xl shadow-xl mt-10 border border-gray-100 dark:border-gray-800">
-                    <div className="text-red-500 font-bold mb-4 text-xl">Falha ou arquivo incompatível com o Motor de Word.</div>
-                    <button onClick={handleReset} className="mt-4 border-2 border-red-500 text-red-500 font-bold py-3 px-8 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20">Tentar Novamente</button>
+                    <div className="text-[#2980f2] font-bold mb-4 text-xl">Falha ou arquivo incompatível com o Motor de Word.</div>
+                    <button onClick={handleReset} className="mt-4 border-2 border-[#2980f2]/50 text-[#2980f2] font-bold py-3 px-8 rounded-xl hover:bg-[#2980f2]/5 dark:hover:bg-[#2980f2]/10">Tentar Novamente</button>
                 </div>
             )}
         </div>

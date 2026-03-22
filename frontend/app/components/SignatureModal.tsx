@@ -62,13 +62,13 @@ export default function SignatureModal({ isOpen, onClose, onSave }: SignatureMod
 
                 <div className="flex w-full bg-gray-50 dark:bg-[#121212] p-2">
                     <button 
-                        className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${activeTab === 'draw' ? 'bg-white dark:bg-[#252525] shadow-sm text-blue-600 dark:text-blue-400' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-200'}`}
+                        className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${activeTab === 'draw' ? 'bg-white dark:bg-[#252525] shadow-sm text-[#2980f2] dark:text-[#2980f2]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-200'}`}
                         onClick={() => setActiveTab('draw')}
                     >
                         Criar Desenho
                     </button>
                     <button 
-                        className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${activeTab === 'upload' ? 'bg-white dark:bg-[#252525] shadow-sm text-blue-600 dark:text-blue-400' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-200'}`}
+                        className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${activeTab === 'upload' ? 'bg-white dark:bg-[#252525] shadow-sm text-[#2980f2] dark:text-[#2980f2]' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-200'}`}
                         onClick={() => setActiveTab('upload')}
                     >
                         Upload de Imagem
@@ -106,10 +106,10 @@ export default function SignatureModal({ isOpen, onClose, onSave }: SignatureMod
                             </div>
 
                             <div className="flex justify-between w-full mt-5">
-                                <button onClick={handleClear} className="flex items-center gap-2 text-gray-500 hover:text-red-500 font-bold px-4 py-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                <button onClick={handleClear} className="flex items-center gap-2 text-gray-500 hover:text-[#2980f2] font-bold px-4 py-2 rounded-xl hover:bg-[#2980f2]/5 dark:hover:bg-[#2980f2]/10 transition-colors">
                                     <Eraser className="w-4 h-4" /> Recomeçar
                                 </button>
-                                <button onClick={handleSaveDraw} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 rounded-xl shadow-lg hover:-translate-y-0.5 transition-transform">
+                                <button onClick={handleSaveDraw} className="flex items-center gap-2 bg-[#2980f2] hover:bg-[#2980f2]/90 text-white font-bold px-6 py-2 rounded-xl shadow-lg hover:-translate-y-0.5 transition-transform">
                                     <Check className="w-4 h-4" /> Aplicar Assinatura
                                 </button>
                             </div>
@@ -118,9 +118,9 @@ export default function SignatureModal({ isOpen, onClose, onSave }: SignatureMod
                         <div className="flex flex-col items-center">
                             <div 
                                 onClick={() => fileInputRef.current?.click()}
-                                className="w-full h-48 border-2 border-dashed border-blue-300 hover:border-blue-500 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:border-blue-700 dark:hover:bg-blue-900/40 rounded-2xl transition-colors cursor-pointer flex flex-col items-center justify-center group"
+                                className="w-full h-48 border-2 border-dashed border-[#2980f2]/50 hover:border-[#2980f2]/50 bg-[#2980f2]/5 hover:bg-blue-100 dark:bg-[#2980f2]/10 dark:border-blue-700 dark:hover:bg-[#2980f2]/10 rounded-2xl transition-colors cursor-pointer flex flex-col items-center justify-center group"
                             >
-                                <UploadCloud className="w-12 h-12 text-blue-400 group-hover:text-blue-600 mb-3 transition-colors" />
+                                <UploadCloud className="w-12 h-12 text-blue-400 group-hover:text-[#2980f2] mb-3 transition-colors" />
                                 <span className="text-gray-600 dark:text-gray-300 font-medium group-hover:text-gray-800 dark:group-hover:text-gray-100">Upload Imagem PNG (Fundo Transparente)</span>
                                 <input type="file" accept="image/png" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
                             </div>

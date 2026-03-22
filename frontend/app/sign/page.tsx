@@ -180,16 +180,16 @@ export default function SignPDF() {
     if (!isMounted) return null;
 
     return (
-        <div className="min-h-screen bg-[#F0F2F5] dark:bg-[#121212] flex flex-col pt-24 pb-12 px-4 items-center font-sans tracking-tight transition-colors">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-[#33333B] dark:text-gray-100 mb-3">Assinatura Digital (E-Sign)</h1>
-            <p className="text-lg text-[#33333B] dark:text-gray-300 font-light mb-10 text-center max-w-2xl text-opacity-80">
+        <div className="flex flex-col pt-24 pb-12 px-4 items-center font-sans tracking-tight transition-colors">
+            <h1 className="text-4xl md:text-5xl font-sans font-extrabold text-slate-900 dark:text-white text-center tracking-wide drop-shadow-sm font-light mb-3">Assinatura Digital (E-Sign)</h1>
+            <p className="text-[#3a3a40] dark:text-[#a0a0ab] text-lg lg:text-xl text-center mb-10 max-w-2xl font-light tracking-wide">
                 Aponte e assine documentos desenhando seu próprio rubro virtual ou escaneando uma imagem. Autenticação empresarial.
             </p>
 
             {!fileUrl ? (
-                <div onClick={() => document.getElementById("fileInput")?.click()} className="w-full max-w-4xl h-[320px] bg-white dark:bg-[#1e1e1e] border-4 border-dashed border-blue-300 dark:border-blue-900/50 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all rounded-[30px] flex flex-col items-center justify-center cursor-pointer shadow-sm group">
-                    <UploadCloud className="w-24 h-24 text-blue-300 dark:text-gray-500 group-hover:scale-110 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-transform mb-6" />
-                    <button className="bg-blue-600 tracking-wide hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-2xl text-xl shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] transition-transform transform hover:scale-105 pointer-events-none">
+                <div onClick={() => document.getElementById("fileInput")?.click()} className="w-full max-w-4xl h-[350px] bg-white dark:bg-[#1e1e1e] border-4 border-dashed border-[#2980f2]/30 hover:border-[#2980f2]/70 hover:bg-[#2980f2]/5 dark:hover:bg-[#2980f2]/10 transition-all rounded-[30px] flex flex-col items-center justify-center cursor-pointer shadow-sm group">
+                    <UploadCloud className="w-24 h-24 text-gray-400 dark:text-gray-500 group-hover:scale-110 group-hover:text-[#2980f2] transition-transform mb-6" />
+                    <button className="bg-[#2980f2] hover:opacity-90 tracking-wide text-white font-semibold py-4 px-10 rounded-2xl text-xl shadow-lg transition-transform transform hover:scale-105 pointer-events-none">
                         Carregar PDF para Assinatura
                     </button>
                     <input type="file" id="fileInput" accept="application/pdf" className="hidden" onChange={onFileChange} />
@@ -201,7 +201,7 @@ export default function SignPDF() {
                     <div className="w-full xl:w-[350px] bg-white dark:bg-[#1e1e1e] p-6 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 flex flex-col gap-6 h-fit shrink-0 relative z-10 sticky top-24">
                         <div className="flex justify-between items-center pb-4 border-b border-gray-100 dark:border-gray-800">
                             <h3 className="font-extrabold text-xl text-[#33333B] dark:text-gray-100">Camadas do Rubro</h3>
-                            <button onClick={() => setIsModalOpen(true)} className="bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white px-3 py-2 rounded-xl text-sm font-bold flex items-center transition-colors shadow-sm">
+                            <button onClick={() => setIsModalOpen(true)} className="bg-[#2980f2]/10 text-[#2980f2] hover:bg-[#2980f2] hover:text-white px-3 py-2 rounded-xl text-sm font-bold flex items-center transition-colors shadow-sm">
                                 <PenTool className="w-4 h-4 mr-2" /> Assinar
                             </button>
                         </div>
@@ -216,12 +216,12 @@ export default function SignPDF() {
                             
                             {signatures.map((el, i) => (
                                 <div key={el.id} className="bg-gray-50 dark:bg-[#1a1a1a] p-4 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col gap-3 group relative transition hover:shadow-md animate-in slide-in-from-left">
-                                    <div className="absolute top-0 left-0 w-1 h-full bg-blue-500 rounded-l-2xl"></div>
+                                    <div className="absolute top-0 left-0 w-1 h-full bg-[#2980f2] rounded-l-2xl"></div>
                                     <div className="flex justify-between items-center pl-2">
                                         <span className="font-bold text-xs uppercase tracking-wider text-gray-400">Assinatura #{i+1}</span>
-                                        <button onClick={() => handleRemoveSignature(el.id)} className="text-red-400 hover:text-red-500 text-xs font-bold px-2 py-1 bg-white dark:bg-gray-800 border shadow-sm rounded-lg transition">Excluir</button>
+                                        <button onClick={() => handleRemoveSignature(el.id)} className="text-red-400 hover:text-[#2980f2] text-xs font-bold px-2 py-1 bg-white dark:bg-gray-800 border shadow-sm rounded-lg transition">Excluir</button>
                                     </div>
-                                    <div className="w-full h-20 bg-white dark:bg-[#121212] overflow-hidden rounded-xl border border-blue-100 dark:border-blue-900/30 flex items-center justify-center ml-2 p-1">
+                                    <div className="w-full h-20 bg-white dark:bg-[#121212] overflow-hidden rounded-xl border border-[#2980f2]/20 flex items-center justify-center ml-2 p-1">
                                         <img src={el.base64Url} alt="E-Sign Preview" className="max-h-full max-w-full object-contain" />
                                     </div>
                                     <div className="flex items-center gap-2 ml-2 bg-white dark:bg-gray-800 p-2 rounded-lg border border-gray-100 dark:border-gray-700">
@@ -233,7 +233,7 @@ export default function SignPDF() {
                         </div>
                         
                         <div className="mt-auto pt-6 border-t flex flex-col gap-3">
-                            <button onClick={handleProcess} className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] transition">
+                            <button onClick={handleProcess} className="w-full flex items-center justify-center gap-2 bg-[#2980f2] hover:opacity-90 text-white font-semibold py-4 rounded-xl shadow-lg transition">
                                 <CheckCircle className="w-5 h-5"/> Carimbar Documentos
                             </button>
                         </div>
@@ -248,15 +248,15 @@ export default function SignPDF() {
                                 <button onClick={() => setCurrentPage(p => Math.min(p + 1, numPages))} disabled={currentPage >= numPages} className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Próxima</button>
                             </div>
                             <div className="flex items-center gap-2 bg-white dark:bg-gray-800 px-2 py-1 rounded-xl">
-                                <button onClick={() => setZoom(z => Math.max(z - 0.25, 0.5))} className="w-8 h-8 font-bold text-lg hover:text-blue-500 rounded-lg">-</button>
+                                <button onClick={() => setZoom(z => Math.max(z - 0.25, 0.5))} className="w-8 h-8 font-bold text-lg hover:text-[#2980f2] rounded-lg">-</button>
                                 <span className="font-extrabold w-14 text-center text-[#33333B] dark:text-white text-sm">{Math.round(zoom * 100)}%</span>
-                                <button onClick={() => setZoom(z => Math.min(z + 0.25, 4))} className="w-8 h-8 font-bold text-lg hover:text-blue-500 rounded-lg">+</button>
+                                <button onClick={() => setZoom(z => Math.min(z + 0.25, 4))} className="w-8 h-8 font-bold text-lg hover:text-[#2980f2] rounded-lg">+</button>
                             </div>
                         </div>
 
                         <div className="relative shadow-2xl mx-auto w-max" ref={pageContainerRef}>
                             {fileUrl && (
-                                <Document file={fileUrl} onLoadSuccess={onDocumentLoadSuccess} loading={<div className="p-32 flex flex-col items-center"><Loader2 className="animate-spin w-12 h-12 text-blue-500 mb-4" /></div>}>
+                                <Document file={fileUrl} onLoadSuccess={onDocumentLoadSuccess} loading={<div className="p-32 flex flex-col items-center"><Loader2 className="animate-spin w-12 h-12 text-[#2980f2] mb-4" /></div>}>
                                     <Page pageNumber={currentPage} onLoadSuccess={onPageLoadSuccess} onRenderSuccess={onRenderSuccess} renderTextLayer={false} renderAnnotationLayer={false} className="border bg-white" scale={zoom} />
                                 </Document>
                             )}
@@ -282,11 +282,11 @@ export default function SignPDF() {
                                                     y: position.y / renderScaleY
                                                 });
                                             }}
-                                            className="pointer-events-auto border-2 border-dashed border-blue-400 hover:border-blue-600 rnd-signature cursor-move bg-black/5"
+                                            className="pointer-events-auto border-2 border-dashed border-[#2980f2]/50 hover:border-[#2980f2] rnd-signature cursor-move bg-black/5"
                                         >
                                             <div className="w-full h-full relative group flex items-center justify-center">
                                                 <img src={el.base64Url} alt="Sign" className="w-full h-full object-fill pointer-events-none" />
-                                                <div className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer shadow-lg" onClick={() => handleRemoveSignature(el.id)}>&times;</div>
+                                                <div className="absolute -top-3 -right-3 bg-[#2980f2]/50 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer shadow-lg" onClick={() => handleRemoveSignature(el.id)}>&times;</div>
                                             </div>
                                         </Rnd>
                                     ))}
@@ -298,14 +298,14 @@ export default function SignPDF() {
                 </div>
             ) : status === "uploading" ? (
                 <div className="flex flex-col items-center mt-32 animate-in zoom-in">
-                    <Loader2 className="w-24 h-24 animate-spin text-blue-500 mb-8" />
-                    <span className="text-4xl font-extrabold text-white">Carimbando Documentos...</span>
+                    <Loader2 className="w-24 h-24 animate-spin text-[#2980f2] mb-8" />
+                    <span className="text-4xl font-extrabold text-slate-900 dark:text-white">Carimbando Documentos...</span>
                 </div>
             ) : (
                 <div className="flex flex-col items-center mt-20 p-16 bg-[#1e1e1e] rounded-[40px] shadow-2xl border animate-in flip-in-y">
-                    <CheckCircle className="w-32 h-32 text-green-500 mb-8 drop-shadow-lg" />
-                    <h2 className="text-5xl font-extrabold text-white mb-6">Assinado com Sucesso!</h2>
-                    <a href={downloadUrl!} download="Documento_Assinado.pdf" className="w-full min-w-[300px] bg-blue-600 text-white text-center font-bold py-6 rounded-2xl text-2xl hover:bg-blue-700 shadow-xl flex items-center justify-center mb-6">
+                    <CheckCircle className="w-32 h-32 text-[#2980f2] mb-8 drop-shadow-lg" />
+                    <h2 className="text-5xl font-sans font-extrabold text-white mb-6">Assinado com Sucesso!</h2>
+                    <a href={downloadUrl!} download="Documento_Assinado.pdf" className="w-full min-w-[300px] bg-[#2980f2] text-white text-center font-semibold py-6 rounded-2xl text-2xl hover:opacity-90 shadow-xl flex items-center justify-center mb-6">
                         <Download className="w-7 h-7 mr-3" /> Baixar Documento
                     </a>
                 </div>
