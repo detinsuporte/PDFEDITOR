@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { UploadCloud, ScanText, CheckCircle, Loader2, Globe } from "lucide-react";
 import axios from "axios";
+import PrivacyBadge from "../components/PrivacyBadge";
 
 const LOADING_MESSAGES = [
     "Inicializando AI Vision EasyOCR (PyTorch)...",
@@ -57,7 +58,7 @@ export default function OCR() {
         formData.append("lang", lang);
 
         try {
-            const response = await axios.post("http://localhost:8000/api/ocr", formData, {
+            const response = await axios.post("http://localhost:8000/api/pdf/ocr", formData, {
                 responseType: 'blob',
             });
 
@@ -96,7 +97,7 @@ export default function OCR() {
                     </div>
                     <PrivacyBadge />
                 </div>
-            ) : status === 'idle' || status === 'error' ? (
+            ) : status !== 'success' ? (
                 <div className="w-full max-w-md bg-white dark:bg-[#1e1e1e] rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 flex flex-col items-center text-center transition-all">
                     {status === "idle" && (
                         <>
