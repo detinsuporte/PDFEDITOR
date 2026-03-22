@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import Link from "next/link";
 import ThemeToggle from "./components/ThemeToggle";
 import { ThemeProvider } from "./providers";
+import PrivacyBadge from "./components/PrivacyBadge";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -44,9 +45,12 @@ export default function RootLayout({
                         <ThemeToggle />
                     </div>
                 </header>
-                <main className="pt-16 min-h-screen transition-colors duration-200">
+                <main className="pt-16 min-h-[calc(100vh-80px)] transition-colors duration-200 block">
                     {children}
                 </main>
+                <footer className="w-full bg-[#F3F0EC] dark:bg-[#121212] pt-4 pb-8 transition-colors duration-200">
+                    <PrivacyBadge />
+                </footer>
                 </ThemeProvider>
             </body>
         </html>
