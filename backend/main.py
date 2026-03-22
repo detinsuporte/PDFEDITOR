@@ -597,6 +597,76 @@ async def compress_pdf(file: UploadFile = File(...)):
         print(f"Compress error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/pdf/watermark")
+async def add_global_watermark(
+    background_tasks: BackgroundTasks, 
+    file: UploadFile = File(...), 
+    text: str = Form("CONFIDENCIAL"),
+    color: str = Form("#FF0000"),
+    opacity: float = Form(0.3),
+    fontSize: int = Form(60)
+):
+    """
+    Aplica Marca D'água Global a 45 graus com opacidade perfeita no centro exato de cada página.
+    """
+    try:
+        color_hex = color.lstrip('#')
+        r, g, b = tuple(int(color_hex[i:i+2], 16)/255.0 for i in (0, 2, 4))
+        
+        file_bytes = await file.read()
+        
+        vault_path = os.path.join(MIRIAM_VAULT_DIR, f"{uuid4()}_{file.filename}")
+        with open(vault_path, "wb") as f:
+            f.write(file_bytes)
+        
+        doc = fitz.open(vault_path)
+        
+        for page in doc:
+            center_x = page.rect.width / 2
+            center_y = page.rect.height / 2
+            p_center = fitz.Point(center_x, center_y)
+            
+            text_length = fitz.get_text_length(text, fontname="helv", fontsize=fontSize)
+            x = center_x - (text_length / 2)
+            y = center_y
+            
+            # Insere rotacionando rigorosamente ao redor do centro
+            try:
+                page.insert_text(
+                    fitz.Point(x, y), 
+                    text, 
+                    fontsize=fontSize, 
+                    color=(r, g, b), 
+                    fill_opacity=opacity,
+                    morph=(p_center, fitz.Matrix(-45))
+                )
+            except Exception:
+                # Fallback seguro para versões exóticas do fitz
+                shape = page.new_shape()
+                shape.insert_text(fitz.Point(x, y), text, fontsize=fontSize)
+                shape.finish(color=(r,g,b), fill=(r,g,b), fill_opacity=opacity)
+                shape.commit(morph=(p_center, fitz.Matrix(-45)))
+                
+        out_pdf_bytes = doc.write()
+        doc.close()
+        
+        background_tasks.add_task(os.remove, vault_path)
+        
+        pdf_stream = io.BytesIO(out_pdf_bytes)
+        pdf_stream.seek(0)
+        
+        filename = file.filename or "document"
+        return StreamingResponse(
+            pdf_stream,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f"attachment; filename=\"Carimbado_{filename}\""}
+        )
+    except Exception as e:
+        print(f"Watermark error: {e}")
+        if 'vault_path' in locals() and os.path.exists(vault_path):
+            os.remove(vault_path)
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/")
 def read_root(): return {"status": "success"}
 
