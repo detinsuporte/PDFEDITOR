@@ -51,7 +51,7 @@ export default function ConvertToWord() {
 
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", `Convertido_Word_iLovePDF.docx`);
+            link.setAttribute("download", `Convertido_Word_MiriamPDF.docx`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -105,7 +105,7 @@ export default function ConvertToWord() {
                     
                     <div className="flex flex-col sm:flex-row gap-4 w-full px-4">
                         {downloadUrl && (
-                            <a href={downloadUrl} download="Convertido_Word_iLovePDF.docx" className="flex-1 bg-[#1E1E1E] hover:bg-black text-white font-bold py-5 px-6 rounded-2xl flex items-center justify-center shadow-xl transition-all hover:-translate-y-1">
+                            <a href={downloadUrl} download="Convertido_Word_MiriamPDF.docx" className="flex-1 bg-[#1E1E1E] hover:bg-black text-white font-bold py-5 px-6 rounded-2xl flex items-center justify-center shadow-xl transition-all hover:-translate-y-1">
                                 Baixar Arquivo DOCX
                             </a>
                         )}

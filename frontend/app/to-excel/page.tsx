@@ -61,7 +61,7 @@ export default function ConvertToExcel() {
 
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", `Convertido_Excel_iLovePDF.xlsx`);
+            link.setAttribute("download", `Convertido_Excel_MiriamPDF.xlsx`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -147,7 +147,7 @@ export default function ConvertToExcel() {
                     
                     <div className="flex flex-col sm:flex-row gap-4 w-full px-4">
                         {downloadUrl && (
-                            <a href={downloadUrl} download="Convertido_Excel_iLovePDF.xlsx" className="flex-1 bg-[#2980f2] hover:bg-[#2980f2]/90 text-white font-bold py-5 px-6 rounded-2xl flex items-center justify-center shadow-xl transition-all hover:-translate-y-1">
+                            <a href={downloadUrl} download="Convertido_Excel_MiriamPDF.xlsx" className="flex-1 bg-[#2980f2] hover:bg-[#2980f2]/90 text-white font-bold py-5 px-6 rounded-2xl flex items-center justify-center shadow-xl transition-all hover:-translate-y-1">
                                 Baixar Arquivo EXCEL
                             </a>
                         )}

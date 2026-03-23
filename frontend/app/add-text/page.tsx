@@ -439,7 +439,7 @@ export default function AddText() {
                     <button onClick={() => {
                         const link = document.createElement("a");
                         link.href = downloadUrl!;
-                        link.setAttribute("download", "Documento_Editado_iLovePDF.pdf");
+                        link.setAttribute("download", "Documento_Editado_MiriamPDF.pdf");
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);

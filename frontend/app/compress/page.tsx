@@ -43,7 +43,7 @@ export default function CompressPDF() {
 
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", `Comprimido_iLovePDF.pdf`);
+            link.setAttribute("download", `Comprimido_MiriamPDF.pdf`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -92,7 +92,7 @@ export default function CompressPDF() {
                     
                     <div className="flex flex-col sm:flex-row gap-4 w-full px-4 mt-6">
                         {downloadUrl && (
-                            <a href={downloadUrl} download="Comprimido_iLovePDF.pdf" className="flex-1 bg-[#1E1E1E] dark:bg-gray-700 hover:bg-black dark:hover:bg-gray-600 text-white font-bold py-5 px-6 rounded-2xl flex items-center justify-center shadow-xl transition-all hover:-translate-y-1">
+                            <a href={downloadUrl} download="Comprimido_MiriamPDF.pdf" className="flex-1 bg-[#1E1E1E] dark:bg-gray-700 hover:bg-black dark:hover:bg-gray-600 text-white font-bold py-5 px-6 rounded-2xl flex items-center justify-center shadow-xl transition-all hover:-translate-y-1">
                                 Baixar Pela 2ª Vez
                             </a>
                         )}

@@ -178,7 +178,7 @@ export default function Home() {
 
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", "Documento_Junto_iLovePDF.pdf");
+            link.setAttribute("download", "Documento_Junto_MiriamPDF.pdf");
             document.body.appendChild(link);
             link.click();
 
