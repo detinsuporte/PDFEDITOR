@@ -768,6 +768,74 @@ async def add_global_watermark(
             os.remove(vault_path)
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/pdf/to-image")
+async def pdf_to_image(
+    pdf: UploadFile = File(...),
+    format: str = Form(default="png"),
+):
+    """
+    Converte cada página do PDF em imagem PNG ou JPG (300 DPI via PyMuPDF).
+    - 1 página  → retorna a imagem diretamente
+    - N páginas → retorna um ZIP com pagina_1.png, pagina_2.png, ...
+    """
+    fmt = format.lower().strip()
+    if fmt not in ("png", "jpg", "jpeg"):
+        raise HTTPException(status_code=400, detail="Formato inválido. Use 'png' ou 'jpg'.")
+    if fmt == "jpeg":
+        fmt = "jpg"
+
+    pdf_bytes = await pdf.read()
+    try:
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+    except Exception as exc:
+        raise HTTPException(status_code=422, detail=f"PDF inválido ou corrompido: {exc}")
+
+    # Matriz 300 DPI (zoom = 300/72 ≈ 4.17)
+    zoom = 300 / 72
+    matrix = fitz.Matrix(zoom, zoom)
+    fitz_fmt = "png" if fmt == "png" else "jpeg"
+
+    page_count = len(doc)
+
+    if page_count == 1:
+        # Retorna imagem única diretamente
+        page = doc[0]
+        if fmt == "jpg":
+            pix = page.get_pixmap(matrix=matrix, alpha=False)  # sem transparência para JPG
+        else:
+            pix = page.get_pixmap(matrix=matrix)
+        img_bytes = pix.tobytes(fitz_fmt)
+        doc.close()
+        media_type = "image/png" if fmt == "png" else "image/jpeg"
+        base = os.path.splitext(pdf.filename or "pagina")[0]
+        return StreamingResponse(
+            io.BytesIO(img_bytes),
+            media_type=media_type,
+            headers={"Content-Disposition": f'attachment; filename="{base}.{fmt}"'},
+        )
+
+    # Múltiplas páginas → ZIP em memória
+    zip_buffer = io.BytesIO()
+    base = os.path.splitext(pdf.filename or "documento")[0]
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+        for i, page in enumerate(doc):
+            if fmt == "jpg":
+                pix = page.get_pixmap(matrix=matrix, alpha=False)
+            else:
+                pix = page.get_pixmap(matrix=matrix)
+            img_bytes = pix.tobytes(fitz_fmt)
+            zf.writestr(f"pagina_{i + 1}.{fmt}", img_bytes)
+
+    doc.close()
+    zip_buffer.seek(0)
+
+    return StreamingResponse(
+        zip_buffer,
+        media_type="application/zip",
+        headers={"Content-Disposition": f'attachment; filename="{base}_imagens.zip"'},
+    )
+
+
 @app.post("/api/pdf/to-pdfa")
 async def convert_to_pdfa(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
     """
