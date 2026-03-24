@@ -199,6 +199,34 @@ export default function Home() {
         }
     };
 
+    // ── Gov.br → ZapSign ────────────────────────────────────────────────────
+    const handleLoginGovBr = async () => {
+        const selectedFile = originalFiles[0];
+        if (!selectedFile) {
+            alert("Selecione ao menos um PDF antes de assinar com Gov.br.");
+            return;
+        }
+        const formData = new FormData();
+        formData.append("pdf", selectedFile);
+        try {
+            const res = await axios.post(
+                "http://localhost:8000/api/pdf/zapsign/create",
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
+            );
+            if (res.data?.sign_url) {
+                window.open(res.data.sign_url, "zapsign_popup", "width=860,height=820");
+            } else {
+                alert("ZapSign não retornou um link de assinatura.");
+            }
+        } catch (err: unknown) {
+            const msg = axios.isAxiosError(err)
+                ? (err.response?.data?.error ?? err.response?.data?.detail ?? err.message)
+                : "Erro ao criar documento na ZapSign.";
+            alert(`Erro Gov.br: ${msg}`);
+        }
+    };
+
     return (
         <div className="flex flex-col items-center justify-center pt-24 pb-32 px-4">
             <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white text-center mb-6 tracking-tight drop-shadow-sm">
@@ -285,7 +313,7 @@ export default function Home() {
                                 <span className="text-xl font-bold text-gray-800 dark:text-gray-100">Pronto para criar a mágica?</span>
                                 <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{pages.length} página(s) carregada(s) prontas para o merge.</span>
                             </div>
-                            <div className="flex gap-4 mr-4 sm:mr-10">
+                            <div className="flex gap-3 mr-4 sm:mr-10 flex-wrap justify-end">
                                 <button
                                     onClick={handleReset}
                                     className="hidden sm:block bg-white dark:bg-[#1e1e1e] hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold py-4 px-8 rounded-xl transition-colors border border-transparent hover:border-gray-200 dark:hover:border-gray-700"

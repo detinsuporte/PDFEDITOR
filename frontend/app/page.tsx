@@ -1,10 +1,12 @@
 import Link from 'next/link';
-import { Type, Split, FileArchive, Settings, RefreshCw, FileText, FileSpreadsheet, ScanText, PenTool, Lock, Unlock, Stamp, Crown } from 'lucide-react';
+import { Type, Split, FileArchive, RefreshCw, FileText, FileSpreadsheet, ScanText, Lock, Unlock, Stamp, Crown, ShieldCheck, FileCheck2 } from 'lucide-react';
 
 export default function Dashboard() {
     const tools = [
         { name: "Juntar PDF", desc: "Mescle e junte PDFs na ordem que desejar.", icon: <RefreshCw className="w-8 h-8 text-gray-400 group-hover:text-[#2980f2] transition-colors duration-500" />, href: "/merge", premium: false },
-        { name: "Assinar PDF", desc: "Adicione Assinaturas Digitais corporativas (E-Sign) arrastáveis no seu documento.", icon: <PenTool className="w-8 h-8 text-gray-400 group-hover:text-[#2980f2] transition-colors duration-500" />, href: "/sign", premium: true },
+
+        { name: "Assinatura Digital A1", desc: "Assine PDFs com certificado ICP-Brasil A1 (.pfx / .p12) — validade jurídica completa.", icon: <ShieldCheck className="w-8 h-8 text-gray-400 group-hover:text-[#2980f2] transition-colors duration-500" />, href: "/sign-a1", premium: true },
+        { name: "Converter para PDF/A", desc: "Converta para PDF/A-2b (ISO 19005) — padrão exigido pelo PJe e arquivamento jurídico de longo prazo.", icon: <FileCheck2 className="w-8 h-8 text-gray-400 group-hover:text-[#2980f2] transition-colors duration-500" />, href: "/to-pdf-a", premium: false },
         { name: "Adicionar Texto", desc: "Adicione texto, números ou carimbos ao seu PDF.", icon: <Type className="w-8 h-8 text-gray-400 group-hover:text-[#2980f2] transition-colors duration-500" />, href: "/add-text", premium: false },
         { name: "Dividir PDF", desc: "Extraia páginas do seu PDF ou divida-o em vários arquivos.", icon: <Split className="w-8 h-8 text-gray-400 group-hover:text-[#2980f2] transition-colors duration-500" />, href: "/split", premium: false },
         { name: "Comprimir PDF", desc: "Reduza o tamanho do seu PDF preservando qualidade.", icon: <FileArchive className="w-8 h-8 text-gray-400 group-hover:text-[#2980f2] transition-colors duration-500" />, href: "/compress", premium: false },

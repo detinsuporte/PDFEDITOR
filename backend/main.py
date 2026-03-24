@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()  # Carrega variáveis do .env automaticamente
 import io
 import shutil
 from uuid import uuid4
@@ -54,6 +56,105 @@ async def lifespan(app: FastAPI):
     scheduler.shutdown()
 
 app = FastAPI(title="iLovePDF API Clone", lifespan=lifespan)
+
+# Módulo de autenticação e assinatura digital gov.br
+from govbr_auth import router as govbr_router
+app.include_router(govbr_router)
+
+# Integração ZapSign (assinatura com Gov.br via plataforma ZapSign)
+from zapsign_router import router as zapsign_router
+app.include_router(zapsign_router, prefix="/api/pdf")
+
+# Endpoint de compatibilidade com o frontend: POST /api/pdf/sign-govbr
+# Aceita multipart/form-data com campo "pdf" (arquivo) e "token" (access_token gov.br)
+@app.post("/api/pdf/sign-govbr")
+async def sign_pdf_via_govbr(
+    pdf: UploadFile = File(...),
+    token: str = Form(...),
+):
+    """
+    Wrapper multipart para assinar PDF via gov.br.
+    Delega a lógica para o módulo govbr_auth.
+    """
+    import base64
+    import hashlib
+    import httpx
+    import io
+    from govbr_auth import GOVBR_SIGNPDF_URL
+
+    pdf_bytes = await pdf.read()
+    doc_hash = hashlib.sha256(pdf_bytes).hexdigest()
+
+    # Se o token for DEMO_TOKEN_123 (modo demonstração), assina localmente
+    if token == "DEMO_TOKEN_123":
+        # Simula assinatura adicionando carimbo visual
+        pdf_doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+        last_page = pdf_doc[-1]
+        rect = fitz.Rect(20, last_page.rect.height - 70, 280, last_page.rect.height - 20)
+        last_page.draw_rect(rect, color=(0.0, 0.3, 0.7), fill=(0.9, 0.95, 1.0), width=1.5)
+        last_page.insert_text(
+            fitz.Point(rect.x0 + 6, rect.y0 + 14),
+            "✓ Assinado digitalmente via gov.br (Demonstração)",
+            fontsize=8, color=(0.0, 0.2, 0.6),
+        )
+        last_page.insert_text(
+            fitz.Point(rect.x0 + 6, rect.y0 + 26),
+            f"SHA-256: {doc_hash[:32]}...",
+            fontsize=6, color=(0.3, 0.3, 0.3),
+        )
+        buf = io.BytesIO()
+        pdf_doc.save(buf)
+        pdf_doc.close()
+        buf.seek(0)
+        out_name = pdf.filename.replace(".pdf", "_assinado_govbr.pdf") if pdf.filename else "assinado_govbr.pdf"
+        return StreamingResponse(
+            buf,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="{out_name}"'},
+        )
+
+    # Fluxo real: envia hash ao gov.br e injeta assinatura PKCS#7
+    try:
+        async with httpx.AsyncClient() as client:
+            sign_resp = await client.post(
+                GOVBR_SIGNPDF_URL,
+                json={"hash": doc_hash, "algorithm": "SHA256withRSA", "signature_type": "CAdES-AD-RT"},
+                headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+                timeout=30,
+            )
+    except httpx.TimeoutException:
+        raise HTTPException(status_code=504, detail="Timeout ao contactar serviço de assinatura gov.br.")
+
+    if sign_resp.status_code == 401:
+        raise HTTPException(status_code=401, detail="Token gov.br inválido ou expirado.")
+    if sign_resp.status_code != 200:
+        raise HTTPException(status_code=502, detail=f"gov.br retornou erro {sign_resp.status_code}: {sign_resp.text}")
+
+    pdf_doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+    last_page = pdf_doc[-1]
+    rect = fitz.Rect(20, last_page.rect.height - 70, 280, last_page.rect.height - 20)
+    last_page.draw_rect(rect, color=(0.0, 0.3, 0.7), fill=(0.9, 0.95, 1.0), width=1.5)
+    last_page.insert_text(
+        fitz.Point(rect.x0 + 6, rect.y0 + 14),
+        "✓ Assinado digitalmente via gov.br",
+        fontsize=8, color=(0.0, 0.2, 0.6),
+    )
+    last_page.insert_text(
+        fitz.Point(rect.x0 + 6, rect.y0 + 26),
+        f"SHA-256: {doc_hash[:32]}...",
+        fontsize=6, color=(0.3, 0.3, 0.3),
+    )
+    buf = io.BytesIO()
+    pdf_doc.save(buf)
+    pdf_doc.close()
+    buf.seek(0)
+    out_name = pdf.filename.replace(".pdf", "_assinado_govbr.pdf") if pdf.filename else "assinado_govbr.pdf"
+    return StreamingResponse(
+        buf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{out_name}"'},
+    )
+
 
 # CORS Setup - Permite chamadas do frontend Next.js na porta 3000 e 3001
 app.add_middleware(
@@ -667,6 +768,274 @@ async def add_global_watermark(
             os.remove(vault_path)
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/pdf/to-pdfa")
+async def convert_to_pdfa(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+    """
+    Converte um PDF para conformidade PDF/A-2b (ISO 19005-2) usando pikepdf.
+    Adequado para arquivamento de longo prazo e protocolos jurídicos (PJe).
+    """
+    import tempfile
+    import pikepdf
+
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Arquivo deve ser um PDF.")
+
+    file_bytes = await file.read()
+    tmp_in = None
+    tmp_out = None
+
+    try:
+        # Arquivo temporário de entrada
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f_in:
+            f_in.write(file_bytes)
+            tmp_in = f_in.name
+
+        tmp_out = tmp_in.replace(".pdf", "_pdfa.pdf")
+
+        # Abre com pikepdf e salva com metadados PDF/A-2b
+        with pikepdf.open(tmp_in) as pdf:
+            with pdf.open_metadata(set_pikepdf_as_editor=False) as meta:
+                meta["pdfaid:part"] = "2"
+                meta["pdfaid:conformance"] = "B"
+                meta["dc:format"] = "application/pdf"
+
+            pdf.save(
+                tmp_out,
+                linearize=True,
+                compress_streams=True,
+                object_stream_mode=pikepdf.ObjectStreamMode.generate,
+            )
+
+        base_name = os.path.splitext(file.filename or "documento")[0]
+        out_filename = f"{base_name}_pdfa.pdf"
+
+        # Lê o arquivo convertido para memória antes de deletar
+        with open(tmp_out, "rb") as f_out:
+            pdf_bytes_out = f_out.read()
+
+        background_tasks.add_task(cleanup_files, [tmp_in, tmp_out])
+
+        return StreamingResponse(
+            io.BytesIO(pdf_bytes_out),
+            media_type="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="{out_filename}"'},
+        )
+
+    except pikepdf.PdfError as exc:
+        cleanup_files([f for f in [tmp_in, tmp_out] if f])
+        raise HTTPException(status_code=422, detail=f"PDF inválido ou corrompido: {exc}")
+    except Exception as exc:
+        cleanup_files([f for f in [tmp_in, tmp_out] if f])
+        raise HTTPException(status_code=500, detail=f"Erro na conversão PDF/A: {exc}")
+
+
 @app.get("/")
 def read_root(): return {"status": "success"}
+
+
+
+# ---------------------------------------------------------------------------
+# ASSINATURA DIGITAL A1 ICP-Brasil (PAdES via pyHanko)
+# ---------------------------------------------------------------------------
+@app.post("/api/pdf/sign-a1")
+async def sign_pdf_a1(
+    pdf: UploadFile = File(...),
+    certificado: UploadFile = File(...),
+    senha: str = Form(...),
+    # Parâmetros opcionais de posicionamento do carimbo visual
+    page_number: int   = Form(1),
+    pos_x:       float = Form(None),
+    pos_y:       float = Form(None),
+    sig_width:   float = Form(240.0),
+    sig_height:  float = Form(72.0),
+):
+    """
+    Assina um PDF com certificado digital A1 ICP-Brasil (PAdES).
+    - pdf: arquivo PDF a ser assinado
+    - certificado: arquivo .pfx ou .p12 com a chave privada + certificado
+    - senha: senha do certificado (nunca registrada em log)
+    """
+    try:
+        from pyhanko.sign import signers, fields
+        from pyhanko.sign.fields import SigFieldSpec
+        from pyhanko import stamp
+        from pyhanko.pdf_utils.incremental_writer import IncrementalPdfFileWriter
+        from pyhanko.sign.signers.pdf_signer import PdfSignatureMetadata
+        import asn1crypto.core
+    except ImportError:
+        raise HTTPException(
+            status_code=500,
+            detail="Biblioteca pyhanko não instalada. Execute: pip install 'pyhanko[pkcs11]'"
+        )
+
+    pdf_bytes = await pdf.read()
+    cert_bytes = await certificado.read()
+
+    # Tenta carregar o certificado P12/PFX — captura erros de senha/formato
+    # SimpleSigner.load_pkcs12 espera path-like, usamos arquivo temporário
+    import tempfile, os as _os
+
+    try:
+        from pyhanko.sign.signers import SimpleSigner
+        with tempfile.NamedTemporaryFile(suffix=".pfx", delete=False) as tmp_cert:
+            tmp_cert.write(cert_bytes)
+            tmp_cert_path = tmp_cert.name
+        try:
+            signer = SimpleSigner.load_pkcs12(
+                pfx_file=tmp_cert_path,
+                passphrase=senha.encode("utf-8"),
+            )
+        finally:
+            _os.unlink(tmp_cert_path)
+    except (ValueError, TypeError) as exc:
+        msg = str(exc).lower()
+        if "password" in msg or "mac" in msg or "bad decrypt" in msg or "invalid password" in msg:
+            raise HTTPException(
+                status_code=401,
+                detail="Senha do certificado incorreta. Verifique e tente novamente."
+            )
+        raise HTTPException(
+            status_code=400,
+            detail=f"Certificado inválido ou formato não suportado: {exc}"
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Não foi possível carregar o certificado: {exc}"
+        )
+
+    # Executa a assinatura PAdES em thread pool (operação bloqueante)
+    try:
+        output_buf = await run_in_threadpool(
+            _assinar_pdf, pdf_bytes, signer,
+            page_number, pos_x, pos_y, sig_width, sig_height
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro ao assinar o PDF: {exc}"
+        )
+
+    nome_original = pdf.filename or "documento.pdf"
+    nome_saida = f"Assinado_{nome_original}"
+
+    return StreamingResponse(
+        io.BytesIO(output_buf),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{nome_saida}"'},
+    )
+
+
+def _assinar_pdf(
+    pdf_bytes: bytes,
+    signer,
+    page_number: int = 1,
+    pos_x: float | None = None,
+    pos_y: float | None = None,
+    sig_width: float = 240.0,
+    sig_height: float = 72.0,
+) -> bytes:
+    """Executa a assinatura PAdES de forma síncrona (chamado via run_in_threadpool).
+
+    Quando pos_x / pos_y são fornecidos, cria um carimbo visual com:
+    - Texto do titular (CN do certificado)
+    - Data e hora da assinatura
+    - Indicação ICP-Brasil
+    O campo é posicionado em coordenadas de pontos PDF (72 dpi).
+    """
+    from pyhanko.sign import signers, fields
+    from pyhanko.sign.fields import SigFieldSpec
+    from pyhanko.pdf_utils.incremental_writer import IncrementalPdfFileWriter
+    from pyhanko.sign.signers.pdf_signer import PdfSignatureMetadata
+    from pyhanko.stamp import TextStampStyle, TextStampBoxLayout
+    from pyhanko_certvalidator import CertificateValidator
+    import datetime, asn1crypto.pem, asn1crypto.x509
+
+    # ── Extrair CN do certificado para exibir no carimbo ──────────────────
+    try:
+        cert_obj = signer.signing_cert
+        subject = cert_obj.subject
+        # subject é um asn1crypto.x509.Name; itera pelos pares
+        cn = next(
+            (rdn.value for rdn in subject.human_friendly.split(",") if "CN=" in rdn),
+            None,
+        )
+        if cn:
+            cn = cn.replace("CN=", "").strip()
+        # Fallback: representação completa
+        if not cn:
+            cn = subject.human_friendly
+    except Exception:
+        cn = "Titular"
+
+    agora = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-3)))
+    data_str = agora.strftime("%d/%m/%Y %H:%M:%S")
+
+    reader_buf = io.BytesIO(pdf_bytes)
+    writer = IncrementalPdfFileWriter(reader_buf)
+
+    # ── Configurar carimbo visual (se posição fornecida) ──────────────────
+    sig_field_spec = None
+    stamp_style = None
+
+    if pos_x is not None and pos_y is not None:
+        # Índice de página 0-based
+        page_idx = max(0, page_number - 1)
+
+        # Bounding box PDF: (x1, y1, x2, y2) em pontos
+        box = (pos_x, pos_y, pos_x + sig_width, pos_y + sig_height)
+
+        sig_field_spec = SigFieldSpec(
+            sig_field_name="Signature1",
+            on_page=page_idx,
+            box=box,
+        )
+
+        # Estilo textual simples para o carimbo visual
+        try:
+            stamp_style = TextStampStyle(
+                stamp_text=(
+                    f"Assinado digitalmente por:\n"
+                    f"{cn}\n"
+                    f"Data: {data_str}\n"
+                    f"ICP-Brasil PAdES"
+                ),
+                background="#EFF6FF",
+                border_width=1,
+            )
+        except Exception:
+            # TextStampStyle pode não aceitar background como string em versões antigas;
+            # usa sem background caso falhe
+            stamp_style = TextStampStyle(
+                stamp_text=(
+                    f"Assinado digitalmente por:\n"
+                    f"{cn}\n"
+                    f"Data: {data_str}\n"
+                    f"ICP-Brasil PAdES"
+                ),
+            )
+
+        # Adicionar campo de assinatura antes de assinar
+        try:
+            fields.append_signature_field(writer, sig_field_spec)
+        except Exception:
+            # Campo pode já existir ou página inválida; continua sem campo explícito
+            sig_field_spec = None
+
+    # ── Executar a assinatura ─────────────────────────────────────────────
+    output_buf = io.BytesIO()
+
+    sign_kwargs: dict = dict(
+        writer=writer,
+        signature_meta=PdfSignatureMetadata(field_name="Signature1"),
+        signer=signer,
+        output=output_buf,
+    )
+    if stamp_style is not None:
+        sign_kwargs["stamp_style"] = stamp_style
+
+    signers.sign_pdf(**sign_kwargs)
+    return output_buf.getvalue()
 

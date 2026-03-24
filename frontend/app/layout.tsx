@@ -5,6 +5,7 @@ import ThemeToggle from "./components/ThemeToggle";
 import { ThemeProvider } from "./providers";
 import PrivacyBadge from "./components/PrivacyBadge";
 import NavBackButton from "./components/NavBackButton";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,6 +24,7 @@ export default function RootLayout({
         <html lang="pt-BR" suppressHydrationWarning>
             <body className={`${inter.className} bg-[#F8FAFC] dark:bg-[#0B1120] transition-colors duration-200`}>
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                    <Toaster position="top-center" richColors theme="system" />
                     <header className="w-full h-20 bg-[#F8FAFC]/90 dark:bg-[#0B1120]/90 border-b border-gray-200 dark:border-gray-800/50 backdrop-blur-md flex items-center justify-between px-8 fixed top-0 z-50 transition-colors duration-500">
                         <div className="flex items-center">
                           <Link href="/" className="flex items-center text-2xl font-sans font-extrabold tracking-tight text-slate-900 dark:text-white hover:opacity-80 transition-opacity">
